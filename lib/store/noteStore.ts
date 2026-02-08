@@ -1,44 +1,30 @@
-import { create } from 'zustand';
+import {create} from 'zustand'; 
 import { persist } from 'zustand/middleware';
 
-export interface Draft {
-   title: string;
-   content: string;
-   tag: string;
-}
+import {NoteFormValues} from '@/types/NoteFormValues'
 
-export const initialDraft: Draft = {
-   title: '',
-   content: '',
-   tag: 'Todo',
+type NoteDraftStore = {
+  draft: NoteFormValues;
+  setDraft: (note: NoteFormValues) => void;
+  clearDraft: () => void;
 };
 
-interface NoteStore {
-   draft: Draft;
-   setDraft: (draft: Partial<Draft>) => void;
-   clearDraft: () => void;
-}
+const initialDraft: NoteFormValues = {
+  title: '',
+  content: '',
+  tag: 'Todo',
+};
 
-export const useNoteStore = create<NoteStore>()(
-   persist(
-      (set) => ({
-         draft: initialDraft,
-
-         setDraft: (updatedDraft: Partial<Draft>) => {
-            set((state) => ({
-               draft: {
-                  ...state.draft,
-                  ...updatedDraft,
-               },
-            }));
-         },
-
-         clearDraft: () => {
-            set({ draft: initialDraft });
-         },
-      }),
-      {
-         name: 'note-store',
-      }
-   )
+export const useNoteDraftStore = create<NoteDraftStore>()(
+  persist(
+    (set) => ({
+      draft: initialDraft,
+      setDraft: (note: NoteFormValues) => set({ draft: note }),
+      clearDraft: () => set({ draft: initialDraft }),
+    }),
+    {
+      name: 'note-draft',
+      partialize: (state) => ({ draft: state.draft }),
+    }
+  )
 );

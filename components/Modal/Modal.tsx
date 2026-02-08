@@ -1,46 +1,44 @@
-import css from "./Modal.module.css";
-import { createPortal } from "react-dom";
-import { useEffect } from "react";
+import css from './Modal.module.css'
+import {createPortal} from 'react-dom'
+import {useEffect} from 'react'
 
 interface ModalProps {
-  children: React.ReactNode;
-  onClose: () => void;
+    children: React.ReactNode;
+    onClose: () => void;
 }
 
-export default function Modal({ children, onClose }: ModalProps) {
-  useEffect(() => {
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
+export default function Modal({children, onClose}: ModalProps) {
 
-    document.body.style.overflow = "hidden";
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
 
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+        document.addEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
+        }
+    }, [onClose]);
+
+    const closeModal = (event: React.MouseEvent<HTMLDivElement>) => {
+        if(event.target === event.currentTarget) {
+            onClose();
+        }
     };
 
-    window.addEventListener("keydown", onEsc);
-
-    return () => {
-      window.removeEventListener("keydown", onEsc);
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, [onClose]);
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
-  return createPortal(
-    <div
-      className={css.backdrop}
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className={css.modal}>{children}</div>
-    </div>,
-    document.body,
-  );
+    return createPortal (
+        <div
+            className={css.backdrop}
+            role="dialog"
+            aria-modal="true"
+            onClick={closeModal}
+            >
+            <div className={css.modal}>
+                {children}
+            </div>
+        </div>,
+        document.body
+    );
 }

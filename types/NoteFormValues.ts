@@ -1,5 +1,5 @@
 export interface NoteFormValues {
-   title: string;
-   content: string;
-   tag: string;
-}
+    title: string;
+    content: string;
+    tag: string;
+};

@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useState } from "react";
@@ -11,7 +13,9 @@ const TanStackProvider = ({ children }: Props) => {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
   );
 };
 
